@@ -42,24 +42,34 @@ class SpecMachine(CarBase):
         self.extra = extra
 
 
-def parser(row):
-    return tuple(row[1], row[2], row[3], row[4])
+def parser(row, ty_car):
+    if ty_car == 'car':
+        print([row[1], row[3], row[5], row[2]])
+        return [row[1], row[3], row[5], row[2]]
+    elif ty_car == 'truck':
+        return [row[1], row[3], row[5], row[4]]
+    elif ty_car == 'spec_machine':
+        return [row[1], row[3], row[5], row[6]]
 
 
 def get_car_list(csv_filename):
     car_list = []
+    #try:
     with open(csv_filename) as csv_fd:
         reader = csv.reader(csv_fd, delimiter=';')
         next(reader)  # пропускаем заголовок
         for row in reader:
-            if row[0] == 'car':
-                car = Car(parser(row))
+            if len(row[0]) == 0:
+                continue
+            elif row[0] == 'car':
+                car = Car(parser(row, 'car'))
                 car_list.append(car)
             elif row[0] == 'truck':
-                truck = Truck(parser(row))
+                truck = Truck(parser(row, 'truck'))
                 car_list.append(truck)
             elif row[0] == 'spec_machine':
-                sp = SpecMachine(parser(row))
+                sp = SpecMachine(parser(row, 'spec_machine'))
                 car_list.append(sp)
-            
+    #except TypeError:
+     #   pass        
     return car_list
