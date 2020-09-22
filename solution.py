@@ -1,29 +1,43 @@
-"""Первое задание на этой неделе — не сложное, для разогрева. 
-Ваша задача: написать python-модуль solution.py, внутрь которого 
-необходимо поместить код класса FileReader. Конструктор этого класса принимает один 
-параметр: путь до файла на диске. В классе FileReader должен быть реализован метод read,
- возвращающий строку - содержимое файла, путь к которому был указан при создании 
- экземпляра класса. Python модуль должен быть написан таким образом, чтобы импорт класса
-  FileReader из него не вызвал ошибок.
+import pandas as pd
+import os
 
-При написании реализации метода read, вам нужно учитывать случай, 
-когда при инициализации был передан путь к несуществующему файлу. 
-Требуется обработать возникающее при этом исключение FileNotFoundError и вернуть из
- метода read пустую строку."""
+class CarBase:
+    def __init__(self, brand, photo_file_name, carrying):
+        self.brand = brand
+        self.photo_file_name = photo_file_name
+        self.carrying = carrying
 
-
-class FileReader:
-
-    def __init__(self, name=None):
-        self.name = name
-
-    def read(self):
-        try:
-
-            with open(self.name, 'r') as f:
-                nl = [i for i in f.readlines()]
-                return ''.join(nl)
-        except FileNotFoundError:
-            return ''
+    def get_photo_file_ext(self):
+        ty = os.path.splitext(self.photo_file_name)
+        return ty[1]
 
 
+
+class Car(CarBase):
+    def __init__(self, brand, photo_file_name, carrying, passenger_seats_count):
+        super().__init__(brand, photo_file_name, carrying)
+        self.passenger_seats_count=passenger_seats_count
+
+
+class Truck(CarBase):
+    def __init__(self, brand, photo_file_name, carrying, body_whl):
+        super().__init__(brand, photo_file_name, carrying)
+        self.body_whl = body_whl
+        dim = [d for d in body_whl.split('x')]
+        self._body_length = dim[0]
+        self._body_width = dim[1]
+        self._body_height = dim[2]
+
+    def get_body_volume(self):
+        return self._body_length * self._body_width * self._body_height
+
+
+class SpecMachine(CarBase):
+    def __init__(self, brand, photo_file_name, carrying, extra):
+        super().__init__(brand, photo_file_name, carrying)
+        self.extra = extra
+
+
+def get_car_list(csv_filename):
+    car_list = []
+    return car_list
