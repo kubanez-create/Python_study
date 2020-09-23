@@ -2,8 +2,7 @@ import csv
 import os
 
 class CarBase:
-    def __init__(self, car_type = None, brand=None, photo_file_name=None, carrying=None):
-        self.car_type = car_type
+    def __init__(self, brand=None, photo_file_name=None, carrying=None):
         self.brand = brand
         self.photo_file_name = photo_file_name
         self.carrying = carrying
@@ -15,42 +14,64 @@ class CarBase:
 
 
 class Car(CarBase):
-    def __init__(self, passenger_seats_count, car_type=None, brand=None, photo_file_name=None, carrying=None):
-        super().__init__(car_type, brand, photo_file_name, carrying)
+    def __init__(self, passenger_seats_count=None, brand=None, photo_file_name=None, carrying=None):
+        super().__init__(brand, photo_file_name, carrying)
         self.passenger_seats_count = passenger_seats_count
+        self.car_type = 'car'
 
 
 class Truck(CarBase):
-    def __init__(self, car_type=None, brand=None, photo_file_name=None, carrying=None, body_whl=None):
-        super().__init__(car_type, brand, photo_file_name, carrying)
+    def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
+        super().__init__(brand, photo_file_name, carrying)
         self.body_whl = body_whl
-        if not self.body_whl == 0:
-            self._body_length = 0
-            self._body_width = 0
-            self._body_height = 0    
+        self.car_type = 'truck'
+        print("Body_whl before if equal", self.body_whl)
+        if type(body_whl) != type(''):
+            print("Body_whl now equal", body_whl)
+            self.body_length = 0
+            self.body_width = 0
+            self.body_height = 0    
         else:
             dim = [float(d) for d in self.body_whl.split('x')]
-            self._body_length = dim[0]
-            self._body_width = dim[1]
-            self._body_height = dim[2]
+            print(dim)
+            self.body_length = dim[0]
+            self.body_width = dim[1]
+            self.body_height = dim[2]
 
     def get_body_volume(self):
-        return round(self._body_length * self._body_width * self._body_height, 1)
+        return round(self.body_length * self.body_width * self.body_height, 1)
 
 
 class SpecMachine(CarBase):
-    def __init__(self, car_type=None, brand=None, photo_file_name=None, carrying=None, extra=None):
-        super().__init__(car_type, brand, photo_file_name, carrying)
+    def __init__(self, brand=None, photo_file_name=None, carrying=None, extra=None):
+        super().__init__(brand, photo_file_name, carrying)
         self.extra = extra
+        self.car_type = 'spec_machine'
 
 
-def parser(row, ty_car):
-    if ty_car == 'car':
-        return row[2], row[1], row[3], row[5]
-    elif ty_car == 'truck':
-        return row[1], row[3], row[5], row[4]
-    elif ty_car == 'spec_machine':
-        return row[1], row[3], row[5], row[6]
+
+def setter(row, obj):
+    if row[0] == 'car':
+        obj.car_type = row[0]
+        obj.passenger_seats_count = row[2]
+        obj.brand = row[1]
+        obj.photo_file_name = row[3]
+        obj.carrying = row[5]
+        return obj
+    elif row[0] == 'truck':
+        obj.car_type = row[0]
+        obj.brand = row[1]
+        obj.photo_file_name = row[3]
+        obj.carrying = row[5]
+        obj.body_whl = row[4]
+        return obj
+    elif row[0] == 'spec_machine':
+        obj.car_type = row[0]
+        obj.brand = row[1]
+        obj.photo_file_name = row[3]
+        obj.carrying = row[5]
+        obj.extra = row[6]
+        return obj
 
 
 def get_car_list(csv_filename):
@@ -62,14 +83,14 @@ def get_car_list(csv_filename):
             for row in reader:
                 if len(row[0]) != 0:
                     if row[0] == 'car':
-                        car = Car(parser(row, 'car'))
-                        car_list.append(car)
+                        car = Car()
+                        car_list.append(setter(row,car))
                     elif row[0] == 'truck':
-                        truck = Truck(parser(row, 'truck'))
-                        car_list.append(truck)
+                        truck = Truck()
+                        car_list.append(setter(row, truck))
                     elif row[0] == 'spec_machine':
-                        sp = SpecMachine(parser(row, 'spec_machine'))
-                        car_list.append(sp)
+                        sp = SpecMachine()
+                        car_list.append(setter(row, sp))
     except IndexError:
        pass        
     return car_list
