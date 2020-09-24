@@ -40,18 +40,22 @@ class Truck(CarBase):
         super().__init__(brand, photo_file_name, carrying)
         self.body_whl = body_whl
 
-    def splitter(self, bw):
-        if bool(len(bw)):
-            dim = [float(d) for d in bw.split('x')]
-            print('classmethod splitter working', bw)
-            print(dim[0], dim[1], dim[2])
-            return (dim[0], dim[1], dim[2])
+
+    @property
+    def body_whl(self):
+        return self.__body_whl
+    
+    @body_whl.setter
+    def body_whl(self, body_whl):
+        if body_whl:
+            self.__body_whl = body_whl
         else:
-            bw = '0.0x0.0x0.0'
-            dim = [float(d) for d in bw.split('x')]
-            print('classmethod splitter working', bw)
-            print(dim[0], dim[1], dim[2])
-            return (dim[0], dim[1], dim[2])
+            self.__body_whl = '0.0x0.0x0.0'
+
+
+    def splitter(self, bw):
+        dim = [float(d) for d in bw.split('x')]
+        return (dim[0], dim[1], dim[2])
 
 
     def get_body_volume(self):
@@ -134,8 +138,7 @@ def get_car_list(csv_filename):
                         car_list.append(setter(row,car))
                     elif row[0] == 'truck':
                         obj = Truck()
-                        truck = Truck(setter(row, obj))
-                        print(setter(row, truck).__dict__)
+                        truck = Truck(setter(row, obj)
                         truck.body_length, truck.body_width, truck.body_height = truck.splitter(truck.body_whl)
                         if Truck.is_data_valid(row):
                             car_list.append(truck)
