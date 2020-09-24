@@ -38,13 +38,20 @@ class Truck(CarBase):
     car_type = 'truck'
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
         super().__init__(brand, photo_file_name, carrying)
-        self.body_whl = body_whl or '0.0x0.0x0.0'
+        self.body_whl = body_whl
 
     def splitter(self, bw):
-        dim = [float(d) for d in bw.split('x')]
-        print('classmethod splitter working', bw)
-        print(dim[0], dim[1], dim[2])
-        return (dim[0], dim[1], dim[2])
+        if bool(len(bw)):
+            dim = [float(d) for d in bw.split('x')]
+            print('classmethod splitter working', bw)
+            print(dim[0], dim[1], dim[2])
+            return (dim[0], dim[1], dim[2])
+        else:
+            bw = '0.0x0.0x0.0'
+            dim = [float(d) for d in bw.split('x')]
+            print('classmethod splitter working', bw)
+            print(dim[0], dim[1], dim[2])
+            return (dim[0], dim[1], dim[2])
 
 
     def get_body_volume(self):
@@ -62,6 +69,8 @@ class Truck(CarBase):
             ind += 1
         if sum(l) == (len(row) - 2):
             return True
+        else:
+            return False
 
 
 class SpecMachine(CarBase):
@@ -93,15 +102,14 @@ def setter(row, obj):
             obj.passenger_seats_count = int(row[2])
             obj.brand = row[1]
             obj.photo_file_name = row[3]
-            obj.carrying = row[5]
+            obj.carrying = float(row[5])
         return obj
     elif row[0] == 'truck':
-        if Truck.is_data_valid(row):
-            obj.car_type = row[0]
-            obj.brand = row[1]
-            obj.photo_file_name = row[3]
-            obj.carrying = int(row[5])
-            obj.body_whl = row[4]
+        obj.car_type = row[0]
+        obj.brand = row[1]
+        obj.photo_file_name = row[3]
+        obj.carrying = int(row[5])
+        obj.body_whl = row[4]
         return obj
     elif row[0] == 'spec_machine':
         if SpecMachine.is_data_valid(row):
@@ -125,10 +133,12 @@ def get_car_list(csv_filename):
                         car = Car()
                         car_list.append(setter(row,car))
                     elif row[0] == 'truck':
-                        truck = Truck()
+                        obj = Truck()
+                        truck = Truck(setter(row, obj))
                         print(setter(row, truck).__dict__)
-                        car_list.append(setter(row, truck))
                         truck.body_length, truck.body_width, truck.body_height = truck.splitter(truck.body_whl)
+                        if Truck.is_data_valid(row):
+                            car_list.append(truck)
                     elif row[0] == 'spec_machine':
                         sp = SpecMachine()
                         car_list.append(setter(row, sp))
