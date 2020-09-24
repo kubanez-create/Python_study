@@ -55,6 +55,8 @@ class Truck(CarBase):
 
     def splitter(self, bw):
         dim = [float(d) for d in bw.split('x')]
+        print('classmethod splitter working', bw)
+        print(dim[0], dim[1], dim[2])
         return (dim[0], dim[1], dim[2])
 
 
@@ -71,7 +73,7 @@ class Truck(CarBase):
                 form = bool(type(i)==type('')) #true if type is str
                 l.append(bool(existance and form))
             ind += 1
-        if sum(l) == (len(row) - 2):
+        if sum(l) == (len(row) - 2) or sum(l) == (len(row) - 3):
             return True
         else:
             return False
@@ -138,7 +140,8 @@ def get_car_list(csv_filename):
                         car_list.append(setter(row,car))
                     elif row[0] == 'truck':
                         obj = Truck()
-                        truck = Truck(setter(row, obj)
+                        truck = Truck(setter(row, obj))
+                        print(setter(row, truck).__dict__)
                         truck.body_length, truck.body_width, truck.body_height = truck.splitter(truck.body_whl)
                         if Truck.is_data_valid(row):
                             car_list.append(truck)
