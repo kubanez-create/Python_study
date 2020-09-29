@@ -15,9 +15,9 @@ class CarBase:
 
 class Car(CarBase):
     car_type = 'car'
-    def __init__(self, passenger_seats_count=None, brand=None, photo_file_name=None, carrying=None):
+    def __init__(self, brand=None, passenger_seats_count=None, photo_file_name=None, carrying=None):
         super().__init__(brand, photo_file_name, carrying)
-        self.passenger_seats_count = passenger_seats_count
+        self.passenger_seats_count = int(passenger_seats_count)
     
     @staticmethod
     def is_data_valid(row):
@@ -39,6 +39,10 @@ class Truck(CarBase):
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
         super().__init__(brand, photo_file_name, carrying)
         self.body_whl = body_whl
+        inf = [float(d) for d in body_whl.split('x')]
+        self.body_length = round(inf[0], 1)
+        self.body_width = round(inf[1], 1)
+        self.body_height = round(inf[2], 1)
 
 
     @property
@@ -104,14 +108,13 @@ class SpecMachine(CarBase):
 def setter(row, obj):
     if row[0] == 'car':
         if Car.is_data_valid(row):
-            obj.car_type = row[0]
-            obj.passenger_seats_count = int(row[2])
             obj.brand = row[1]
+            obj.passenger_seats_count = int(row[2])
             obj.photo_file_name = row[3]
             obj.carrying = float(row[5])
         return obj
     elif row[0] == 'truck':
-        obj.car_type = row[0]
+        
         obj.brand = row[1]
         obj.photo_file_name = row[3]
         obj.carrying = int(row[5])
@@ -119,7 +122,7 @@ def setter(row, obj):
         return obj
     elif row[0] == 'spec_machine':
         if SpecMachine.is_data_valid(row):
-            obj.car_type = row[0]
+            
             obj.brand = row[1]
             obj.photo_file_name = row[3]
             obj.carrying = row[5]
