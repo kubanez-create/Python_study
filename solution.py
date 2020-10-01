@@ -2,23 +2,68 @@ import csv
 import os
 
 class CarBase:
+
+    def __new__(cls, *args):
+        if len(args) >= 3:
+            ch = []
+            for i in range(len(args)):
+                if len(args[i]) > 0:
+                    ch.append(1)
+            if sum(ch) == len(args):    
+                return object.__new__(cls)
+
     def __init__(self, brand=None, photo_file_name=None, carrying=None):
         self.brand = brand
         self.photo_file_name = photo_file_name
         self.carrying = carrying
+    
 
     def get_photo_file_ext(self):
-        ty = os.path.splitext(self.photo_file_name)
-        return ty[1]
+        if self.photo_file_name:
+            ty = os.path.splitext(self.photo_file_name)
+        if ty[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+            return ty[1]
 
-
+    @property
+    def carrying(self):
+        return self.__carrying
+    
+    @carrying.setter
+    def carrying(self, value):
+            try:
+                if len(value) > 0 and type(float(value)) == type(0.):
+                    self.__carrying = float(value)
+            except (ValueError, TypeError):
+                return None
 
 class Car(CarBase):
     car_type = 'car'
+    def __new__(cls, *args):
+        if len(args) >= 4:
+            ch = []
+            for i in range(len(args)):
+                if len(args[i]) > 0:
+                    ch.append(1)
+            if sum(ch) == len(args):
+                try:
+                    if len(args[1]) > 0 and isinstance(int(args[1]), int):
+                        return object.__new__(cls)
+                except ValueError:
+                    return None
+
     def __init__(self, brand=None, passenger_seats_count=None, photo_file_name=None, carrying=None):
         super().__init__(brand, photo_file_name, carrying)
-        self.passenger_seats_count = int(passenger_seats_count)
+        self.passenger_seats_count = passenger_seats_count
     
+    @property
+    def passenger_seats_count(self):
+        return self.__passenger_seats_count
+
+    @passenger_seats_count.setter
+    def passenger_seats_count(self, value):
+        if len(value) > 0 and isinstance(int(value), int):
+            self.__passenger_seats_count = int(value)
+
     @staticmethod
     def is_data_valid(row):
         l = []
@@ -36,6 +81,16 @@ class Car(CarBase):
 
 class Truck(CarBase):
     car_type = 'truck'
+    def __new__(cls, *args):
+        if len(args) >= 4:
+            ch = []
+            for i in range(len(args)):
+                if len(args[i]) > 0:
+                    ch.append(1)
+            if sum(ch) == len(args):
+                return object.__new__(cls)
+
+
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
         super().__init__(brand, photo_file_name, carrying)
         self.body_whl = body_whl
@@ -43,7 +98,7 @@ class Truck(CarBase):
         self.body_length = round(inf[0], 1)
         self.body_width = round(inf[1], 1)
         self.body_height = round(inf[2], 1)
-
+    
 
     @property
     def body_whl(self):
@@ -85,9 +140,23 @@ class Truck(CarBase):
 
 class SpecMachine(CarBase):
     car_type = 'spec_machine'
+    def __new__(cls, *args):
+        if len(args) >= 4:
+            ch = []
+            for i in range(len(args)):
+                if len(args[i]) > 0:
+                    ch.append(1)
+            if sum(ch) == len(args):
+                try:
+                    if len(args[3]) > 0 and isinstance(args[3], str):
+                        return object.__new__(cls)
+                except ValueError:
+                    return None
+
     def __init__(self, brand=None, photo_file_name=None, carrying=None, extra=None):
         super().__init__(brand, photo_file_name, carrying)
-        self.extra = extra
+        self.extra = str(extra)
+    
         
     @staticmethod
     def is_data_valid(row):
