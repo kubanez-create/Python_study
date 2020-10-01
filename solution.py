@@ -46,12 +46,13 @@ class Car(CarBase):
                     ch.append(1)
             if sum(ch) == len(args):
                 try:
-                    if len(args[1]) > 0 and isinstance(int(args[1]), int):
+                    if len(args[3]) > 0 and isinstance(int(args[3]), int):
                         return object.__new__(cls)
                 except ValueError:
                     return None
 
-    def __init__(self, brand=None, passenger_seats_count=None, photo_file_name=None, carrying=None):
+    def __init__(self, brand=None, photo_file_name=None, carrying=None,
+    passenger_seats_count=None):
         super().__init__(brand, photo_file_name, carrying)
         self.passenger_seats_count = passenger_seats_count
     
@@ -155,7 +156,19 @@ class SpecMachine(CarBase):
 
     def __init__(self, brand=None, photo_file_name=None, carrying=None, extra=None):
         super().__init__(brand, photo_file_name, carrying)
-        self.extra = str(extra)
+        self.extra = extra
+
+    @property
+    def extra(self):
+        return self.__extra
+
+    @extra.setter
+    def extra(self, value):
+        try:
+            if len(value) > 0 and isinstance(value, str):
+                self.__extra = value
+        except (ValueError,TypeError):
+            return None
     
         
     @staticmethod
@@ -178,12 +191,11 @@ def setter(row, obj):
     if row[0] == 'car':
         if Car.is_data_valid(row):
             obj.brand = row[1]
-            obj.passenger_seats_count = int(row[2])
             obj.photo_file_name = row[3]
             obj.carrying = float(row[5])
+            obj.passenger_seats_count = int(row[2])
         return obj
     elif row[0] == 'truck':
-        
         obj.brand = row[1]
         obj.photo_file_name = row[3]
         obj.carrying = int(row[5])
@@ -191,7 +203,6 @@ def setter(row, obj):
         return obj
     elif row[0] == 'spec_machine':
         if SpecMachine.is_data_valid(row):
-            
             obj.brand = row[1]
             obj.photo_file_name = row[3]
             obj.carrying = row[5]
