@@ -83,13 +83,8 @@ class Car(CarBase):
 class Truck(CarBase):
     car_type = 'truck'
     def __new__(cls, *args):
-        if len(args) >= 4:
-            ch = []
-            for i in range(len(args)):
-                if len(args[i]) > 0:
-                    ch.append(1)
-            if sum(ch) == len(args):
-                return object.__new__(cls)
+        if len(args) == 4:
+            return object.__new__(cls)
 
 
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
@@ -106,9 +101,9 @@ class Truck(CarBase):
         return self.__body_whl
     
     @body_whl.setter
-    def body_whl(self, body_whl):
-        if body_whl:
-            self.__body_whl = body_whl
+    def body_whl(self, value):
+        if isinstance(value, str) and len(value) >= 6:
+            self.__body_whl = value
         else:
             self.__body_whl = '0.0x0.0x0.0'
 
