@@ -9,8 +9,9 @@ class CarBase:
             for i in range(len(args)):
                 if len(args[i]) > 0:
                     ch.append(1)
-            if sum(ch) == len(args):    
-                return object.__new__(cls)
+            if sum(ch) == len(args):
+                if os.path.splitext(args[1])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+                    return object.__new__(cls)
 
     def __init__(self, brand=None, photo_file_name=None, carrying=None):
         self.brand = brand
@@ -47,7 +48,8 @@ class Car(CarBase):
             if sum(ch) == len(args):
                 try:
                     if len(args[3]) > 0 and isinstance(int(args[3]), int):
-                        return object.__new__(cls)
+                        if os.path.splitext(args[1])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+                            return object.__new__(cls)
                 except ValueError:
                     return None
 
@@ -70,8 +72,9 @@ class Car(CarBase):
 class Truck(CarBase):
     car_type = 'truck'
     def __new__(cls, *args):
-        if len(args) == 4:
-            return object.__new__(cls)
+        if len(args) == 4 and len(args[0])!=0 and len(args[1])!=0 and len(args[2])!=0:
+            if os.path.splitext(args[1])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+                return object.__new__(cls)
 
 
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
@@ -126,7 +129,8 @@ class SpecMachine(CarBase):
             if sum(ch) == len(args):
                 try:
                     if len(args[3]) > 0 and isinstance(args[3], str):
-                        return object.__new__(cls)
+                        if os.path.splitext(args[1])[1] in ('.jpg', '.jpeg', '.png', '.gif'):
+                            return object.__new__(cls)
                 except ValueError:
                     return None
 
@@ -180,16 +184,16 @@ def get_car_list(csv_filename):
                 if len(row[0]) != 0:
                     if row[0] == 'car':
                         car = Car(row[1], row[3], row[5], row[2])
-                        car_list.append(car)
+                        if car != None:
+                            car_list.append(car)
                     elif row[0] == 'truck':
                         truck = Truck(row[1], row[3], row[5], row[4])
-                        car_list.append(truck)
+                        if truck != None:
+                            car_list.append(truck)
                     elif row[0] == 'spec_machine':
                         sp = SpecMachine(row[1], row[3], row[5], row[6])
-                        car_list.append(sp)
+                        if sp != None:
+                            car_list.append(sp)
     except IndexError:
        pass        
-    if car_list.count(None) == len(car_list):
-        return []
-    else:
-        return car_list
+    return car_list
