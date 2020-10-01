@@ -90,7 +90,7 @@ class Truck(CarBase):
     def __init__(self, brand=None, photo_file_name=None, carrying=None, body_whl=None):
         super().__init__(brand, photo_file_name, carrying)
         self.body_whl = body_whl
-        inf = [float(d) for d in body_whl.split('x')]
+        inf = [float(d) for d in self.body_whl.split('x')]
         self.body_length = round(inf[0], 1)
         self.body_width = round(inf[1], 1)
         self.body_height = round(inf[2], 1)
@@ -102,10 +102,19 @@ class Truck(CarBase):
     
     @body_whl.setter
     def body_whl(self, value):
-        if isinstance(value, str) and len(value) >= 6:
-            self.__body_whl = value
+        if isinstance(value, str) and len(value) >= 5:
+            try:
+                if len([float(p) for p in value.split('x')])>3:
+                    self.__body_whl = '0.0x0.0x0.0'
+                elif isinstance(float(value.split('x')[0]), float):
+                    self.__body_whl = value
+                else:
+                    self.__body_whl = '0.0x0.0x0.0'
+            except ValueError:
+                self.__body_whl = '0.0x0.0x0.0'
         else:
             self.__body_whl = '0.0x0.0x0.0'
+            
 
 
     def splitter(self, bw):
