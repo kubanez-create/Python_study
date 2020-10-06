@@ -2,6 +2,7 @@ import os
 import tempfile
 
 class File:
+    count = 0
 
     
     def __init__(self, file_path):
@@ -20,22 +21,29 @@ class File:
         return row            
         
     def write(self, st):
-        with open(os.path.join(self.file_path, (self.name + '.txt')), 'a') as f:
+        with open(os.path.join(self.file_path, (self.name + '.txt')), 'w') as f:
             f.write(st)
+        return int(len(st))
 
     def __add__(self, obj):
-        new_path = os.path.join(self.file_path, tempfile.gettempdir())
-        return File(new_path)
+        new_path = self.file_path + tempfile.gettempdir()[2:]
+        new_obj = File(new_path)
+        with open(os.path.join(new_obj.file_path, (new_obj.name + '.txt')), 'w') as d:
+            d.writelines([self.read(), obj.read()])
+        return new_obj
 
     def __iter__(self):
         return self
     
     def __next__(self):
-        if self.current >= self.end:
-            raise StopIteration
+        with open(os.path.join(self.file_path, (self.name + '.txt')), 'r') as d:
+            res = d.readlines()
 
-        result = self.current ** 2
-        self.current += 1
+        if self.count >= len(res):
+            raise StopIteration
+        
+        result = res[self.count]
+        self.count += 1
         return result
 
     def __str__(self):
