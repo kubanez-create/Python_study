@@ -16,8 +16,8 @@ class File:
 
     def read(self):
         with open((self.name), 'r') as f:
-            row = f.readline()
-        return row            
+            row = f.readlines()
+        return ''.join(row)            
         
     def write(self, st):
         with open((self.name), 'w') as f:
@@ -26,7 +26,7 @@ class File:
 
     def __add__(self, obj):
         new_path = self.file_path + tempfile.gettempdir()[2:]
-        new_obj = File(new_path)
+        new_obj = File(os.path.split(new_path)[1])
         with open((new_obj.name), 'w') as d:
             d.writelines([self.read(), obj.read()])
         return new_obj
