@@ -38,8 +38,10 @@ class File:
         with open((self.name), 'r') as d:
             res = d.readlines()
 
-        if self.count >= len(res):
+        if self.count == len(res):
+            self.count = 0
             raise StopIteration
+            
         
         result = res[self.count]
         self.count += 1
